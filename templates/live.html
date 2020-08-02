@@ -26,10 +26,16 @@
   firebase.analytics();
 </script>
 {% block main %}
-{% for value in values %}
-<div style="width: {{width}}; display: inline-block;">
-    {{ value[1] | safe }}
-    {{ value[0] | safe }}
-</div>
-{%endfor%}
+<form enctype="multipart/form-data" action="/live" method="post">
+  <div class="form-group">
+      <input required autocomplete="off" autofocus class="form-control" name="heading" placeholder="heading" type="text"/>
+  </div>
+   <div class="form-group">
+      <input required autocomplete="off" autofocus class="form-control" name="image" placeholder="Enter an image" type="file"/>
+  </div>
+   <div class="form-group">
+      <input required autocomplete="off" autofocus class="form-control" name="desc" placeholder="Enter description" type="text"/>
+  </div>
+  <button class="btn btn-primary" type="submit">Upload</button>
+</form>
 {% endblock %}

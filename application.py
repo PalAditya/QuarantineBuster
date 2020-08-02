@@ -5,7 +5,6 @@ from tempfile import mkdtemp
 import smtplib
 import pygal
 import json
-import numpy as np
 import os
 import requests
 import datetime
@@ -21,10 +20,12 @@ from sklearn import linear_model
 from apscheduler.schedulers.background import BackgroundScheduler
 import firebase_admin
 from firebase_admin import credentials
+from google.cloud import storage
 
 cred = credentials.Certificate("credentials.json")
 firebase_admin.initialize_app(cred, {'databaseURL': 'https://vital-stack-181714.firebaseio.com/'})
-
+client = storage.Client()
+bucket = client.get_bucket("vital-stack-181714.appspot.com")
 # Configure application
 app = Flask(__name__)
 
@@ -73,7 +74,7 @@ def login():
 
         # Query database for username
         users_ref = requests.get(ref+'/users.json')
-        print(users_ref.text)
+        #print(users_ref.text)
         users_ref = json.loads(users_ref.text)
 
         if users_ref is not None:
@@ -123,9 +124,9 @@ def register():
         hash = generate_password_hash(request.form.get("password"))
         users_ref = requests.get(ref+'/users.json')
         user_count = requests.get(ref+'/user_count.json').text
-        print(users_ref.text)
+        #print(users_ref.text)
         users_ref = json.loads(users_ref.text)
-        print(user_count)
+        #print(user_count)
         # unique username constraint violated?
         if users_ref is not None:
             for users in users_ref:
@@ -148,6 +149,51 @@ def register():
     # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
+
+
+@app.route("/live",methods=["GET", "POST"])
+@login_required
+def uploads():
+    if request.method == 'POST':
+        
+        dest_file_name = ""
+        username = session["user_id"]
+        dataCount = json.loads(requests.get(ref+'/user_data/'+username+"/datacount.json").text)
+        if dataCount is None:
+            dataCount = 0
+        else:
+            dataCount = int(dataCount)
+
+        heading = request.form.get("heading")
+        image=request.files["image"]
+
+        if image.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if image and allowed_file(image.filename):
+            filename = secure_filename(image.filename)
+            dest_file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image.save(dest_file_name)
+            filename = session["user_id"] + str(dataCount) + filename
+            os.rename(dest_file_name, os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            dest_file_name = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            imBlob = bucket.blob(dest_file_name)
+            imBlob.upload_from_filename(dest_file_name)
+            os.remove(os.path.join(dest_file_name))
+
+        desc = request.form.get("desc")
+
+        ref2.child("user_data").child(username).child(str(dataCount)).set({"impath":dest_file_name,
+                 "heading": heading,
+                 "desc": desc
+            })
+        
+        dataCount = dataCount + 1
+        ref2.child("user_data").child(username).update({"datacount": dataCount})
+
+        return redirect(url_for("index"))
+    return render_template("live.html")
 
 
 def errorhandler(e):
