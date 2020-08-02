@@ -1,7 +1,30 @@
 {% extends "layout.html" %}
 {% block title %}
-    Live shares
+    Your Uploads
 {% endblock %}
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-analytics.js"></script>
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyCxJHDbWuqrrQVpK9O0zA5sKRMbjFKDZuE",
+    authDomain: "vital-stack-181714.firebaseapp.com",
+    databaseURL: "https://vital-stack-181714.firebaseio.com",
+    projectId: "vital-stack-181714",
+    storageBucket: "vital-stack-181714.appspot.com",
+    messagingSenderId: "26206636594",
+    appId: "1:26206636594:web:41c81a16afa95622c38a2b",
+    measurementId: "G-25W1SB4GJ4"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
 {% block main %}
 {% for value in values %}
 <div style="width: {{width}}; display: inline-block;">
