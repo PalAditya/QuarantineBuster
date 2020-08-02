@@ -53,7 +53,24 @@ ref2 = db.reference("/")
 @app.route("/")
 @login_required
 def index():
-    return render_template("quote.html")
+    contents = json.loads(requests.get(ref + "user_data/" + session["user_id"] + ".json").text)
+    print(contents)
+    new_contents = []
+    for content in contents:
+        try:
+            if contents[content] == "datacount":
+                continue
+            blob = bucket.blob(contents[content]["impath"])
+            temp = {}
+            temp["desc"] = contents[content]["desc"]
+            temp["heading"] = contents[content]["heading"]
+            temp["impath"] = blob.generate_signed_url(datetime.timedelta(seconds=3600), method='GET')
+            new_contents.append(temp)
+        except:
+            continue
+    print(new_contents)
+    contents = new_contents
+    return render_template("quote.html", contents = contents)
     
 @app.route("/login", methods=["GET", "POST"])
 def login():
