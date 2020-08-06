@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block main %}
-   Hi there! Please check out your uploaded images :)
+   Welcome to global feed! Follow, favourite and just have fun!
    {% if contents is not none and contents|length %}
     {% for content in contents %}
     <div class="card" style="width: 18rem;">
@@ -18,6 +18,7 @@
         </div>
       {% endfor %}
     {% else %}
-        You don't seem to have uploaded anything yet. Go to <a href="Upload">Upload</a> to do so.
+    </br>We seem to have trouble reaching to global feed. Why not go to 
+    <a href="Upload">Upload</a> and start your own feed?
     {% endif %}
 {% endblock %}

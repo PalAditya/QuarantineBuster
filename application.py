@@ -1,6 +1,7 @@
 from firebase_admin import db
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file
 from flask_session import Session
+from util import getImages
 from tempfile import mkdtemp
 import smtplib
 import pygal
@@ -9,6 +10,7 @@ import os
 import requests
 import datetime
 import time
+import random
 import atexit
 from bokeh.embed import components
 from bokeh.plotting import figure
@@ -53,23 +55,8 @@ ref2 = db.reference("/")
 @app.route("/")
 @login_required
 def index():
-    contents = json.loads(requests.get(ref + "user_data/" + session["user_id"] + ".json").text)
+    contents = getImages(bucket, session["user_id"], ref)
     print(contents)
-    new_contents = []
-    for content in contents:
-        try:
-            if contents[content] == "datacount":
-                continue
-            blob = bucket.blob(contents[content]["impath"])
-            temp = {}
-            temp["desc"] = contents[content]["desc"]
-            temp["heading"] = contents[content]["heading"]
-            temp["impath"] = blob.generate_signed_url(datetime.timedelta(seconds=3600), method='GET')
-            new_contents.append(temp)
-        except:
-            continue
-    print(new_contents)
-    contents = new_contents
     return render_template("quote.html", contents = contents)
     
 @app.route("/login", methods=["GET", "POST"])
@@ -212,6 +199,21 @@ def uploads():
         return redirect(url_for("index"))
     return render_template("live.html")
 
+@app.route("/global",methods = ["GET"])
+@login_required
+def globalFeed():
+
+    feed = []
+    data_list = json.loads(requests.get(ref + "users.json").text)
+    for data in data_list:
+        #print(data)
+        if data['username'] != session["user_id"]:
+            contents = getImages(bucket, data['username'], ref)
+            feed.extend(contents)
+        
+    random.shuffle(feed) 
+    contents = feed
+    return render_template("global.html", contents = contents)
 
 def errorhandler(e):
     """Handle error"""
