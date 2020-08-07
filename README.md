@@ -15,10 +15,10 @@ More instructions coming soon!
 - Uploading images with image preview, text and description
 - Viewing all uploaded images
 - Global feed to see images from other users
+- Users can delete images and modify image descriptions
 
 ## TODO
 
-- Give users the ability to delete images and modify description
 - Follow users and generate a custom feed out of them
 - Favourite images and save them locally
 - Hashtag/Title based search

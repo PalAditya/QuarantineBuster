@@ -20,7 +20,7 @@
               <div onclick = "myFun2('{{content.key}},{{content.index}}')">
                 <i id = "a{{content.index}}" class="fa fa-trash" style="font-size:24px;color:blue;float:left;padding-left: 90px;"></i>
               </div>
-              <div onclick = "myFun3(document.getElementById('b{{content.index}}'))">
+              <div type="button" onclick = "myFun3('b{{content.index}}')" data-toggle="modal" data-target="#myModal">
                 <i id = "b{{content.index}}" class="fa fa-edit" style="font-size:24px;float:right"></i>
               </div>
             </span>
@@ -30,6 +30,32 @@
     {% else %}
         You don't seem to have uploaded anything yet. Go to <a href="live">Upload</a> to do so.
     {% endif %}
+
+
+    <div class="modal fade" id="myModal" role="dialog">
+      <div class="modal-dialog">
+      
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Add new description</h4>
+          </div>
+          <form id="form" enctype="multipart/form-data" action="/edit" method="post"> 
+            <div class="modal-body">
+              <label for="tagName">New description: </label>
+              <input id="tagName" class="form-control" type="text" name="data"/>
+              <input type="hidden" id="custId" name="custId" value="3487">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <input id="submit" type="submit" class="btn btn-primary" value="Edit description">
+            </div>
+          </form>
+        </div>
+        
+      </div>
+    </div>
 
     <script>
       function myFun(a) {
@@ -50,6 +76,7 @@
       function myFun3(a) {
         //TODO: Navigate to edit page
         console.log("Working2");
+        document.getElementById("custId").value = String(a).substring(1)
       }
       </script>
 

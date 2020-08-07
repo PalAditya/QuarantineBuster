@@ -1,5 +1,5 @@
 from firebase_admin import db
-from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file
+from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify
 from flask_session import Session
 from util import getImages
 from tempfile import mkdtemp
@@ -18,7 +18,6 @@ from werkzeug.exceptions import default_exceptions
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from helpers import apology, login_required, lookup, usd, liveUpdate, getSeries, predictHelper, allowed_file, random_ads
-from sklearn import linear_model
 from apscheduler.schedulers.background import BackgroundScheduler
 import firebase_admin
 from firebase_admin import credentials
@@ -59,6 +58,19 @@ def delete_image():
     print(key)
     username = session["user_id"]
     ref2.child("user_data").child(username).child(key).delete()
+    contents = getImages(bucket, session["user_id"], ref) 
+    return render_template("quote.html", contents = contents)
+
+#TODO: Use AJAX request here
+@app.route('/edit', methods = ['POST'])
+def edit_description():
+    data = request.form.get("data")
+    id = request.form.get("custId")
+    username = session["user_id"]
+    old_data = ref2.child("user_data").child(username).child(id).get()
+    old_data['desc'] = data 
+    ref2.child("user_data").child(username).child(id).update(old_data)
+    #val = {"data": data, "id": id, "old_data": old_data}
     contents = getImages(bucket, session["user_id"], ref) 
     return render_template("quote.html", contents = contents)
 
