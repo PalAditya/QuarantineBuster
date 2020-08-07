@@ -7,7 +7,7 @@ import datetime
 
 def getImages(bucket, next_path, ref):
     contents = json.loads(requests.get(ref + "user_data/" + next_path + ".json").text)
-    print(contents)
+    counter = 0
     if contents is not None:
         new_contents = []
         for content in contents:
@@ -19,6 +19,9 @@ def getImages(bucket, next_path, ref):
                 temp["desc"] = contents[content]["desc"]
                 temp["heading"] = contents[content]["heading"]
                 temp["impath"] = blob.generate_signed_url(datetime.timedelta(seconds=3600), method='GET')
+                temp["index"] = counter
+                temp["key"] = content
+                counter = counter + 1
                 new_contents.append(temp)
             except Exception as e:
                 print(e)

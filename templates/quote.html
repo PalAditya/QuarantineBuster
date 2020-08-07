@@ -13,11 +13,40 @@
           <div class="card-body">
             <h5 class="card-title">{{content.heading}}</h5>
             <p class="card-text">{{content.desc}}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <span>
+              <div onclick = "myFun(document.getElementById('{{content.index}}'))">
+                <i id = "{{content.index}}" class="fa fa-heart" style="float:left; font-size:24px;color:red;text-shadow: 0 0 10px #ff0000;"></i>
+              </div>
+              <!--<div onclick = "{{delete_it(content.key)}}">-->
+              <div onclick = "myFun2(document.getElementById('a{{content.index}}'))">
+                <i id = "a{{content.index}}" class="fa fa-trash" style="font-size:24px;color:blue;float:left;padding-left: 90px;"></i>
+              </div>
+              <div onclick = "myFun3(document.getElementById('b{{content.index}}'))">
+                <i id = "b{{content.index}}" class="fa fa-edit" style="font-size:24px;float:right"></i>
+              </div>
+            </span>
           </div>
         </div>
       {% endfor %}
     {% else %}
         You don't seem to have uploaded anything yet. Go to <a href="live">Upload</a> to do so.
     {% endif %}
+
+    <script>
+      function myFun(a) {
+        if (a.style.color == "red")
+            a.style.color = "white";
+          else
+            a.style.color = "red";
+      }
+      function myFun2(a) {
+        //TODO: Delete using modals
+        console.log("Working");
+      }
+      function myFun3(a) {
+        //TODO: Navigate to edit page
+        console.log("Working2");
+      }
+      </script>
+
 {% endblock %}

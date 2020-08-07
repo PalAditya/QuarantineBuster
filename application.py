@@ -52,6 +52,15 @@ Session(app)
 ref = "https://vital-stack-181714.firebaseio.com/"
 ref2 = db.reference("/")
 
+#Register utility functions used from JS side
+@app.context_processor
+def delete_image():
+    def delete_it(key):
+        username = session["user_id"]
+        #ref2.child("user_data").child(username).child(key).delete()
+    return dict(delete_it = delete_it)
+
+
 @app.route("/")
 @login_required
 def index():
