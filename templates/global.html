@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+   Welcome to global feed! Follow, favourite and just have fun!
+   {% if contents is not none and contents|length %}
+    {% for content in contents %}
+    <div class="card" style="width: 18rem;">
+          <img src= "{{content.impath}}" class="card-img-top" alt="...">
+          <div class="card-body">
+            <h5 class="card-title">{{content.heading}}</h5>
+            <p class="card-text">{{content.desc}}</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+    </br>We seem to have trouble reaching to global feed. Why not go to 
+    <a href="live">Upload</a> and start your own feed?
+    {% endif %}
+{% endblock %}

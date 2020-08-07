@@ -8,7 +8,7 @@
    Hi there! Please check out your uploaded images :)
    {% if contents is not none and contents|length %}
     {% for content in contents %}
-    <div class="card" style="width: 18rem;">
+    <div class="card" style="width: 18rem;" id = "c{{content.index}}">
           <img src= "{{content.impath}}" class="card-img-top" alt="...">
           <div class="card-body">
             <h5 class="card-title">{{content.heading}}</h5>
@@ -17,8 +17,7 @@
               <div onclick = "myFun(document.getElementById('{{content.index}}'))">
                 <i id = "{{content.index}}" class="fa fa-heart" style="float:left; font-size:24px;color:red;text-shadow: 0 0 10px #ff0000;"></i>
               </div>
-              <!--<div onclick = "{{delete_it(content.key)}}">-->
-              <div onclick = "myFun2(document.getElementById('a{{content.index}}'))">
+              <div onclick = "myFun2('{{content.key}},{{content.index}}')">
                 <i id = "a{{content.index}}" class="fa fa-trash" style="font-size:24px;color:blue;float:left;padding-left: 90px;"></i>
               </div>
               <div onclick = "myFun3(document.getElementById('b{{content.index}}'))">
@@ -42,6 +41,11 @@
       function myFun2(a) {
         //TODO: Delete using modals
         console.log("Working");
+        data = a.split(",")
+        $.post( "/postmethod", {
+            javascript_data: data[0] 
+        });
+        document.getElementById("c"+data[1]).remove()
       }
       function myFun3(a) {
         //TODO: Navigate to edit page
