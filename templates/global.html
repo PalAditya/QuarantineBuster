@@ -8,17 +8,52 @@
    Welcome to global feed! Follow, favourite and just have fun!
    {% if contents is not none and contents|length %}
     {% for content in contents %}
-    <div class="card" style="width: 18rem;">
-          <img src= "{{content.impath}}" class="card-img-top" alt="...">
-          <div class="card-body">
-            <h5 class="card-title">{{content.heading}}</h5>
-            <p class="card-text">{{content.desc}}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="card" style="width: 18rem;" id = "c{{content.index}}">
+      <img src= "{{content.impath}}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">{{content.heading}}</h5>
+        <p class="card-text">{{content.desc}}</p>
+        <span>
+          <div onclick = "myFun(document.getElementById('{{content.index}}'))">
+            <i id = "{{content.index}}" class="fa fa-heart" style="float:left; font-size:24px;color:red;text-shadow: 0 0 10px #ff0000;"></i>
           </div>
-        </div>
+          <div onclick = "myFun2('{{content.key}},{{content.index}}')">
+            <i id = "a{{content.index}}" class="fa fa-star" style="font-size:24px;color:blue;float:left;padding-left: 50px;"></i>
+          </div>
+          <div type="button" onclick = "myFun3('b{{content.index}}')">
+            <i id = "b{{content.index}}" class="fa fa-file" style="font-size:24px;float:right;padding-right:30px;"></i>
+          </div>
+          <div type="button" onclick = "myFun3('d{{content.index}}')">
+            <i id = "d{{content.index}}" class="fa fa-save" style="font-size:24px;float:right"></i>
+          </div>
+        </span>
+      </div>
+    </div>
       {% endfor %}
     {% else %}
     </br>We seem to have trouble reaching to global feed. Why not go to 
     <a href="live">Upload</a> and start your own feed?
     {% endif %}
+
+    <script>
+      function myFun(a) {
+        if (a.style.color == "red")
+            a.style.color = "white";
+          else
+            a.style.color = "red";
+      }
+      function myFun2(a) {
+        if (a.style.color == "red")
+            a.style.color = "white";
+          else
+            a.style.color = "red";
+      }
+      function myFun3(a) {
+        if (a.style.color == "red")
+            a.style.color = "white";
+          else
+            a.style.color = "red";
+      }
+      </script>
+
 {% endblock %}

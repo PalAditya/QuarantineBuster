@@ -14,8 +14,8 @@
             <h5 class="card-title">{{content.heading}}</h5>
             <p class="card-text">{{content.desc}}</p>
             <span>
-              <div onclick = "myFun(document.getElementById('{{content.index}}'))">
-                <i id = "{{content.index}}" class="fa fa-heart" style="float:left; font-size:24px;color:red;text-shadow: 0 0 10px #ff0000;"></i>
+              <div onclick = "myFun('{{content.index}}'+','+'{{content.user}}')">
+                <i id = "{{content.index}}" class="fa fa-heart  a{{content.liked}}" style="float:left; font-size:24px;color:white;text-shadow: 0 0 10px #ff0000;"></i>
               </div>
               <div onclick = "myFun2('{{content.key}},{{content.index}}')">
                 <i id = "a{{content.index}}" class="fa fa-trash" style="font-size:24px;color:blue;float:left;padding-left: 90px;"></i>
@@ -58,11 +58,27 @@
     </div>
 
     <script>
+
+      $(document).ready(function() {
+        var p = document.getElementsByClassName("fa fa-heart a1")
+        for(var i = 0; i < p.length; i++)
+        {
+          p[i].style.color = "red"
+        }
+      });
+
       function myFun(a) {
+        var b = a.split(",");
+        a = document.getElementById(b[0]);
+        console.log(b)
         if (a.style.color == "red")
             a.style.color = "white";
-          else
+        else
             a.style.color = "red";
+        console.log(b)
+        $.post("/postmethod2", {
+            javascript_data: b[0]+","+ b[1]
+          });
       }
       function myFun2(a) {
         //TODO: Delete using modals

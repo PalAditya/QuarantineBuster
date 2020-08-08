@@ -55,11 +55,36 @@ ref2 = db.reference("/")
 @app.route('/postmethod', methods = ['POST'])
 def delete_image():
     key = request.form['javascript_data']
-    print(key)
     username = session["user_id"]
     ref2.child("user_data").child(username).child(key).delete()
     contents = getImages(bucket, session["user_id"], ref) 
     return render_template("quote.html", contents = contents)
+
+@app.route('/postmethod2', methods = ['POST'])
+def toggle_liked_images():
+    try:
+        data = request.form['javascript_data']
+        print(type(data))
+        print(data)
+        data = data.split(",")
+        username = data[1]
+        id = data[0]
+        nodevalue = ref2.child("user_data").child(username).child(id).get()
+        uname = session["user_id"]
+
+        dataCount = json.loads(requests.get(ref+'/user_liked_images/'+username+"/datacount.json").text)
+        if dataCount is None:
+            dataCount = 0
+        else:
+            dataCount = int(dataCount)
+        
+        ref2.child("user_liked_images").child(uname).child(str(dataCount)).set({"impath":nodevalue['impath']})
+        dataCount = str(dataCount + 1)
+        ref2.child("user_liked_images").child(uname).update({"datacount": dataCount})
+        return jsonify({"datacount":dataCount})
+    except Exception as e:
+        print(e)
+        return jsonify({"data":"Unexpected error, inform the user"})
 
 #TODO: Use AJAX request here
 @app.route('/edit', methods = ['POST'])
