@@ -14,7 +14,7 @@
             <h5 class="card-title">{{content.heading}}</h5>
             <p class="card-text">{{content.desc}}</p>
             <span>
-              <div onclick = "myFun('{{content.index}}'+','+'{{content.user}}')">
+              <div onclick = "myFun('{{content.index}}'+','+'{{content.user}}'+','+'{{content.liked}}'+','+'{{content.raw_impath}}')">
                 <i id = "{{content.index}}" class="fa fa-heart  a{{content.liked}}" style="float:left; font-size:24px;color:white;text-shadow: 0 0 10px #ff0000;"></i>
               </div>
               <div onclick = "myFun2('{{content.key}},{{content.index}}')">
@@ -77,7 +77,7 @@
             a.style.color = "red";
         console.log(b)
         $.post("/postmethod2", {
-            javascript_data: b[0]+","+ b[1]
+            javascript_data: b[0]+","+ b[1]+","+b[2]+","+b[3]
           });
       }
       function myFun2(a) {

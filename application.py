@@ -1,7 +1,7 @@
 from firebase_admin import db
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_file, jsonify
 from flask_session import Session
-from util import getImages
+from util import getImages, pathless_compare
 from tempfile import mkdtemp
 import smtplib
 import pygal
@@ -64,24 +64,35 @@ def delete_image():
 def toggle_liked_images():
     try:
         data = request.form['javascript_data']
-        print(type(data))
-        print(data)
         data = data.split(",")
         username = data[1]
+        raw_impath = data[3]
         id = data[0]
-        nodevalue = ref2.child("user_data").child(username).child(id).get()
+        liked = data[2]
         uname = session["user_id"]
-
-        dataCount = json.loads(requests.get(ref+'/user_liked_images/'+username+"/datacount.json").text)
-        if dataCount is None:
-            dataCount = 0
+        if liked == 0 or liked == "0" :
+            nodevalue = ref2.child("user_data").child(username).child(id).get()           
+            dataCount = json.loads(requests.get(ref+'/user_liked_images/'+username+"/datacount.json").text)
+            if dataCount is None:
+                dataCount = 0
+            else:
+                dataCount = int(dataCount)
+            ref2.child("user_liked_images").child(uname).child(str(dataCount)).set({"impath":nodevalue['impath']})
+            dataCount = str(dataCount + 1)
+            ref2.child("user_liked_images").child(uname).update({"datacount": dataCount})
+            return jsonify({"datacount":dataCount})
         else:
-            dataCount = int(dataCount)
-        
-        ref2.child("user_liked_images").child(uname).child(str(dataCount)).set({"impath":nodevalue['impath']})
-        dataCount = str(dataCount + 1)
-        ref2.child("user_liked_images").child(uname).update({"datacount": dataCount})
-        return jsonify({"datacount":dataCount})
+            dataCount = int(json.loads(requests.get(ref+'/user_liked_images/'+username+"/datacount.json").text))
+            print(dataCount)
+            for i in range (0, dataCount):
+                x = ref2.child("user_liked_images").child(uname).child(str(i)).get()
+                print(x["impath"])
+                print(raw_impath)
+                if pathless_compare(x["impath"], raw_impath):
+                     ref2.child("user_liked_images").child(uname).child(str(i)).delete()
+                     break
+            return jsonify({"datacount":dataCount})
+
     except Exception as e:
         print(e)
         return jsonify({"data":"Unexpected error, inform the user"})

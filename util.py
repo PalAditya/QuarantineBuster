@@ -33,6 +33,7 @@ def getImages(bucket, next_path, ref):
                 temp["index"] = counter
                 temp["key"] = content
                 temp["user"] = next_path
+                temp["raw_impath"] = contents[content]["impath"] 
                 if contents[content]["impath"] in liked_map:
                     temp["liked"] = 1
                 else:
@@ -48,3 +49,10 @@ def getImages(bucket, next_path, ref):
         contents = []
 
     return contents
+
+def pathless_compare(a, b):
+    a = str(a)
+    b = str(b)
+    a = a.replace("\\","").replace("/","")
+    b = b.replace("\\","").replace("/","")
+    return a == b
